@@ -1,0 +1,140 @@
+plugins {
+    id("fabric-loom") version "0.12-SNAPSHOT"
+    id("com.diffplug.spotless") version "6.9.0"
+    id("com.matthewprenger.cursegradle") version "1.4.0"
+    id("com.modrinth.minotaur") version "2.4.3"
+}
+
+group = "xyz.tiny_potato"
+version = System.getenv("FORESTRY_VERSION") ?: "0.0.0"
+
+dependencies {
+    minecraft("net.minecraft:minecraft:${minecraft_version}")
+    mappings(loom.officialMojangMappings())
+    modImplementation("net.fabricmc:fabric-loader:${loader_version}")
+    modImplementation("net.fabricmc.fabric-api:fabric-api:${api_version}")
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDir("src/generated/resources")
+        }
+    }
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+loom {
+    runs {
+        create("data") {
+            client()
+
+            configName = "Data Generation"
+            runDir = "build/data"
+
+            vmArg("-Dfabric-api.datagen")
+            vmArg("-Dfabric-api.datagen.output-dir=${file("src/generated/resources")}")
+            vmArg("-Dfabric-api.datagen.strict-validation")
+            vmArg("-Dfabric-api.datagen.modid=forestry")
+        }
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
+processResources {
+    inputs.property("version", project.version)
+    setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+
+    from("LICENSE")
+    exclude(".cache")
+
+    filesMatching("fabric.mod.json") {
+        expand("version": project.version)
+    }
+}
+
+/////////////
+// Spotless
+spotless {
+    java {
+        target("src/main/java/**/*.java")
+
+        endWithNewline()
+        indentWithSpaces()
+        removeUnusedImports()
+        toggleOffOn()
+        eclipse().configFile("codeformat/codeformat.xml")
+        importOrderFile("codeformat/forestry.importorder")
+    }
+
+    format("json") {
+        target("src/main/resources/**/*.json")
+        prettier().config(parser: "json")
+    }
+}
+
+////////////////
+// CurseForge
+System.getenv("CURSEFORGE")?.with { String key ->
+    curseforge {
+        apiKey = key
+
+        project {
+            id = project.curseforge_project
+            changelogType = "markdown"
+            changelog = "View changelog at [the release page](https://github.com/ramidzkh/forestry/releases/tag/${version})"
+
+            if (version.contains("alpha")) {
+                releaseType = "alpha"
+            } else if (version.contains("beta")) {
+                releaseType = "beta"
+            } else {
+                releaseType = "release"
+            }
+
+            addGameVersion("${minecraft_version}")
+            addGameVersion("Fabric")
+
+            mainArtifact(remapJar) {
+                displayName = "${project.version}"
+
+                relations {
+                    requiredDependency("fabric")
+                }
+            }
+        }
+    }
+}
+
+////////////////
+// Modrinth
+modrinth {
+    token = System.getenv("MODRINTH")
+    projectId = project.modrinth_project
+    versionNumber = project.version
+    changelog = "View changelog at [the release page](https://github.com/ramidzkh/forestry/releases/tag/${version})"
+
+    if (version.contains("alpha")) {
+        versionType.set("alpha")
+    } else if (version.contains("beta")) {
+        versionType.set("beta")
+    } else {
+        versionType.set("release")
+    }
+
+    uploadFile = remapJar
+    gameVersions = [project.minecraft_version]
+    loaders = ["fabric"]
+
+    dependencies {
+        required.project("fabric-api")
+    }
+}

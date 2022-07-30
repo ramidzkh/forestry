@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "forestry",
+  "version": "${version}",
+  "mixins": ["forestry.mixins.json"],
+  "depends": {
+    "minecraft": ">=1.19.1 <1.20"
+  },
+  "entrypoints": {
+    "main": ["forestry.Forestry::initialize"],
+    "client": ["forestry.client.ForestryClient::initialize"],
+    "fabric-datagen": ["forestry.data.FDataGenerator::initialize"]
+  },
+  "name": "Forestry",
+  "description": "Bees, trees and more.",
+  "icon": "assets/forestry/icon.png",
+  "authors": ["ramidzkh"],
+  "license": ["LGPL-3.0-or-later"],
+  "contact": {
+    "homepage": "https://github.com/ramidzkh/forestry#readme",
+    "issues": "https://github.com/ramidzkh/forestry/issues"
+  }
+}
