@@ -10,7 +10,7 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 
-import forestry.Forestry;
+import forestry.Constants;
 
 public interface ForestryRecipe extends Recipe<Inventory> {
 
@@ -60,7 +60,7 @@ public interface ForestryRecipe extends Recipe<Inventory> {
     @Deprecated
     @Override
     default String getGroup() {
-        return Forestry.MOD_ID;
+        return Constants.MOD_ID;
     }
 
     @Deprecated

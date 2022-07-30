@@ -2,14 +2,19 @@ package forestry;
 
 import net.minecraft.resources.ResourceLocation;
 
+import forestry.core.ForestryBlocks;
+import forestry.core.ForestryItems;
+import forestry.world.ForestryOres;
+
 public interface Forestry {
 
-    String MOD_ID = "forestry";
-
     static ResourceLocation id(String path) {
-        return new ResourceLocation(MOD_ID, path);
+        return new ResourceLocation(Constants.MOD_ID, path);
     }
 
     static void initialize() {
+        ForestryBlocks.init();
+        ForestryItems.init();
+        ForestryOres.init();
     }
 }

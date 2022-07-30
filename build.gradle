@@ -43,6 +43,8 @@ loom {
             vmArg("-Dfabric-api.datagen.modid=forestry")
         }
     }
+
+    accessWidenerPath = file("src/main/resources/forestry.accesswidener")
 }
 
 tasks.withType(JavaCompile) {
