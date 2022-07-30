@@ -9,7 +9,7 @@
   "entrypoints": {
     "main": ["forestry.Forestry::initialize"],
     "client": ["forestry.client.ForestryClient::initialize"],
-    "fabric-datagen": ["forestry.data.FDataGenerator::initialize"]
+    "fabric-datagen": ["forestry.data.ForestryDataGenerator::initialize"]
   },
   "name": "Forestry",
   "description": "Bees, trees and more.",
